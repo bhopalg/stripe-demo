@@ -1,10 +1,46 @@
 import { useGetProducts } from '../utils/api/stripe/get-products';
 import Price from '../components/global/price';
+import { ProductWithPrice } from '../models/stripe-products';
+import { usePublishCheckout } from '../utils/api/stripe/checkout';
+import { notify } from '../components/global/notifications';
 
 export default function Home() {
     const { data: products } = useGetProducts();
+    const mutation = usePublishCheckout();
 
     console.log(products);
+
+    async function handleCheckout(product: ProductWithPrice) {
+        try {
+            const { prices } = product;
+
+            if (prices.length === 0) {
+                notify.error('No prices found for this product');
+                return;
+            }
+
+            const price = prices[0];
+
+            mutation.mutate(
+                {
+                    priceId: price.id,
+                    quantity: 1,
+                },
+                {
+                    onSuccess: res => {
+                        console.log(res);
+                        mutation.reset();
+                        notify.success('Successfully set up checkout');
+                    },
+                    onError: () => {
+                        notify.error('Failed to publish');
+                    },
+                }
+            );
+        } catch (e: any) {
+            notify.error(e.message);
+        }
+    }
 
     return (
         <div className="bg-gray-900">
@@ -38,27 +74,27 @@ export default function Home() {
                 <div className="relative -mt-80">
                     <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="mx-auto grid max-w-md grid-cols-1 gap-8 lg:max-w-4xl lg:grid-cols-2 lg:gap-8">
-                            {products?.map(
-                                ({ name, id, prices, description }) => (
-                                    <div
-                                        key={id}
-                                        className="flex flex-col rounded-3xl bg-white shadow-xl ring-1 ring-black/10"
-                                    >
-                                        <div className="p-8 sm:p-10">
-                                            <h3
-                                                className="text-lg font-semibold leading-8 tracking-tight text-indigo-600"
-                                                id={id}
-                                            >
-                                                {name}
-                                            </h3>
-                                            <Price prices={prices ?? []} />
-                                            <p className="mt-6 text-base leading-7 text-gray-600">
-                                                {description}
-                                            </p>
-                                        </div>
+                            {products?.map(product => (
+                                <button
+                                    type={'button'}
+                                    onClick={() => handleCheckout(product)}
+                                    key={product.id}
+                                    className="flex flex-col rounded-3xl bg-white shadow-xl ring-1 ring-black/10"
+                                >
+                                    <div className="p-8 sm:p-10">
+                                        <h3
+                                            className="text-lg font-semibold leading-8 tracking-tight text-indigo-600"
+                                            id={product.id}
+                                        >
+                                            {product.name}
+                                        </h3>
+                                        <Price prices={product.prices ?? []} />
+                                        <p className="mt-6 text-base leading-7 text-gray-600">
+                                            {product.description}
+                                        </p>
                                     </div>
-                                )
-                            )}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>

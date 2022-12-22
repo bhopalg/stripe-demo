@@ -8,15 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
 });
 
 interface TransformedItem {
-    price_data: {
-        currency: string;
-        product_data: {
-            images: string[];
-            name: string;
-        };
-        unit_amount: number;
-    };
-    description: string;
+    price: string;
     quantity: number;
 }
 
@@ -25,26 +17,10 @@ export default async function handler(
     res: NextApiResponse<any>
 ) {
     try {
-        const {
-            priceData: {
-                currency,
-                productData: { images, name },
-                unitAmount,
-            },
-            description,
-            quantity,
-        }: CreateStripeCheckoutItem = req.body;
+        const { priceId, quantity }: CreateStripeCheckoutItem = req.body;
 
         const transformedItem: TransformedItem = {
-            price_data: {
-                currency,
-                product_data: {
-                    images,
-                    name,
-                },
-                unit_amount: unitAmount * 100,
-            },
-            description,
+            price: priceId,
             quantity,
         };
 
@@ -54,7 +30,6 @@ export default async function handler(
                 : 'https://stripe-checkout-next-js-demo.vercel.app';
 
         const session = await stripe.checkout.sessions.create({
-            payment_method_types: ['card'],
             line_items: [transformedItem],
             mode: 'payment',
             success_url: `${redirectURL}?status=success`,

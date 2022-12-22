@@ -1,12 +1,4 @@
 export interface CreateStripeCheckoutItem {
-    priceData: {
-        currency: string;
-        productData: {
-            images: string[];
-            name: string;
-        };
-        unitAmount: number;
-    };
-    description: string;
+    priceId: string;
     quantity: number;
 }
