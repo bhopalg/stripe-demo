@@ -28,7 +28,6 @@ export default async function handler(
 
         res.status(200).json(productsWithPrice);
     } catch (e: any) {
-        console.log(e);
         res.status(400).json({ message: e.message });
     }
 }
