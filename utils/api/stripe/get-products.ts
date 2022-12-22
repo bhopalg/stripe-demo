@@ -1,8 +1,8 @@
-import Stripe from 'stripe';
 import { useQuery } from '@tanstack/react-query';
 
 import { APIError } from '../api-error';
 import { MILLISECONDS_IN_ONE_MINUTE } from '../../constants';
+import { ProductWithPrice } from '../../../models/stripe-products';
 
 async function getProducts() {
     const url = `/api/products/get-list`;
@@ -23,7 +23,7 @@ async function getProducts() {
 }
 
 export function useGetProducts() {
-    return useQuery<Array<Stripe.Product>, APIError>({
+    return useQuery<Array<ProductWithPrice>, APIError>({
         queryKey: ['products'],
         queryFn: async () => {
             return await getProducts();
