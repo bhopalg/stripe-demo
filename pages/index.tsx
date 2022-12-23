@@ -58,7 +58,6 @@ export const getServerSideProps = withPageAuthRequired({
             try {
                 user = await getGetByEmail(session.user.email);
             } catch (e: any) {
-                console.log(e);
                 if (e.status === 404) {
                     user = await createUser({
                         email: session.user.email,

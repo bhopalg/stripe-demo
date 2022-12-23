@@ -27,3 +27,9 @@ AUTH0_ISSUER_BASE_URL="https://[Your tenant domain. Can be found in the Auth0 da
 AUTH0_CLIENT_ID="[Can be found in the Auth0 dashboard under settings]"
 AUTH0_CLIENT_SECRET="[Can be found in the Auth0 dashboard under settings]"
 ```
+
+# TODO
+
+-   [ ] Create stripe user
+-   [ ] Customer dashboard
+-   [ ] Update stripe user
