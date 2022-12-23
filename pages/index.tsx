@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { loadStripe } from '@stripe/stripe-js';
+import Link from 'next/link';
 
 import { useGetProducts } from '../utils/api/stripe/get-products';
 import Price from '../components/global/price';
@@ -74,8 +76,8 @@ export default function Home() {
     }
 
     return (
-        <div className="bg-gray-900">
-            <div className="relative overflow-hidden pt-32 pb-96 lg:pt-40">
+        <div className="bg-gray-900 h-screen">
+            <div className="relative overflow-hidden pt-32 pb-96 lg:pt-40 h-full">
                 <div>
                     <img
                         className="absolute bottom-0 left-1/2 w-[1440px] max-w-none -translate-x-1/2"
@@ -85,6 +87,7 @@ export default function Home() {
                 </div>
                 <div className="relative mx-auto max-w-7xl px-6 text-center lg:px-8">
                     <div className="mx-auto max-w-2xl lg:max-w-4xl">
+                        <Link href={'/api/auth/login'}>Log in</Link>
                         <h2 className="text-lg font-semibold leading-8 text-indigo-400">
                             Pricing
                         </h2>
@@ -143,3 +146,5 @@ export default function Home() {
         </div>
     );
 }
+
+export const getServerSideProps = withPageAuthRequired();
