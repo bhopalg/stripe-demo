@@ -6,7 +6,7 @@ import Layout from '../components/layout/layout';
 import '../styles/globals.scss';
 import { NotificationsContainer } from '../components/global/notifications';
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
     return (
