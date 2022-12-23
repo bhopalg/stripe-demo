@@ -88,15 +88,15 @@ export default function Checkout() {
                             <LoadingSpinner />
                         </div>
                     )}
-                    <div className="p-8 sm:p-10 relative z-20">
+                    <div className="p-8 sm:p-10 relative z-20 w-full">
                         <h3
-                            className="text-lg font-semibold leading-8 tracking-tight text-indigo-600"
+                            className="text-lg font-semibold leading-8 tracking-tight text-indigo-600 text-left"
                             id={product.id}
                         >
                             {product.name}
                         </h3>
                         <Price prices={product.prices ?? []} />
-                        <p className="mt-6 text-base leading-7 text-gray-600">
+                        <p className="mt-6 text-base leading-7 text-gray-600 text-left">
                             {product.description}
                         </p>
                     </div>
