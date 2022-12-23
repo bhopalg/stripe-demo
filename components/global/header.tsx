@@ -32,9 +32,8 @@ export default function Header() {
                 </Link>
             )}
             {user && (
-                <button
-                    data-tooltip-target="tooltip-default"
-                    type="button"
+                <Link
+                    href={'/settings'}
                     className="inline-flex items-center rounded-full border border-transparent text-white shadow-sm"
                 >
                     {user.picture && (
@@ -47,7 +46,7 @@ export default function Header() {
                             loader={profileImageLoader}
                         />
                     )}
-                </button>
+                </Link>
             )}
         </header>
     );
