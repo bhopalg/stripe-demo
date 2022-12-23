@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios';
+import { useMutation } from '@tanstack/react-query';
 
 import { CreateUserDto, User } from '../../../models/user';
+import { APIError } from '../api-error';
 
 export async function createUser(body: CreateUserDto): Promise<User> {
     try {
@@ -21,4 +23,12 @@ export async function createUser(body: CreateUserDto): Promise<User> {
             throw new Error(error);
         }
     }
+}
+
+export function usePublishUser() {
+    return useMutation<User, AxiosError, CreateUserDto>({
+        mutationFn: async (options: CreateUserDto) => {
+            return await createUser(options);
+        },
+    });
 }
