@@ -1,11 +1,6 @@
-import { dehydrate } from '@tanstack/query-core';
-import { getSession, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 
 import Checkout from '../components/checkout/checkout';
-import { getGetByEmail } from '../utils/api/user/get-by-email';
-import { createUser } from '../utils/api/user/create-user';
-import { User } from '../models/user';
-import { queryClient } from './_app';
 
 export default function Home() {
     return (
@@ -47,40 +42,4 @@ export default function Home() {
     );
 }
 
-export const getServerSideProps = withPageAuthRequired({
-    returnTo: '/',
-    async getServerSideProps(ctx) {
-        // access the user session
-        const session = await getSession(ctx.req, ctx.res);
-
-        if (session) {
-            let user: User | null = null;
-            try {
-                user = await getGetByEmail(session.user.email);
-            } catch (e: any) {
-                if (e.status === 404) {
-                    user = await createUser({
-                        email: session.user.email,
-                    });
-                }
-            }
-
-            if (!user) {
-                throw new Error('User not found');
-            }
-
-            await queryClient.prefetchQuery({
-                queryKey: ['user'],
-                queryFn: async () => {
-                    return await getGetByEmail(session.user.email);
-                },
-            });
-        }
-
-        return {
-            props: {
-                dehydratedState: dehydrate(queryClient),
-            },
-        };
-    },
-});
+export const getServerSideProps = withPageAuthRequired();

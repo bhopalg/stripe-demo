@@ -12,3 +12,5 @@ export interface CreateUserDto {
     email: string;
     stripeCustomerId?: string;
 }
+
+export interface UpdateUserDto extends CreateUserDto {}
