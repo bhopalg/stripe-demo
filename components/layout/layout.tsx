@@ -1,14 +1,13 @@
 import React from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+
+import Header from '../global/header';
 
 interface LayoutProps {
     children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-    const { pathname } = useRouter();
-
     return (
         <>
             <Head>
@@ -16,6 +15,7 @@ export default function Layout({ children }: LayoutProps) {
                 <meta name="description" content="Starter Project" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+            <Header />
             <main>{children}</main>
         </>
     );

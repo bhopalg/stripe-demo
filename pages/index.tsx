@@ -1,5 +1,4 @@
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import Link from 'next/link';
 
 import Checkout from '../components/checkout/checkout';
 
@@ -16,7 +15,6 @@ export default function Home() {
                 </div>
                 <div className="relative mx-auto max-w-7xl px-6 text-center lg:px-8">
                     <div className="mx-auto max-w-2xl lg:max-w-4xl">
-                        <Link href={'/api/auth/login'}>Log in</Link>
                         <h2 className="text-lg font-semibold leading-8 text-indigo-400">
                             Pricing
                         </h2>
