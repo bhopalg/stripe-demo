@@ -17,8 +17,6 @@ function profileImageLoader({
 export default function Header() {
     const { user } = useUser();
 
-    console.log(user);
-
     return (
         <header
             className={'z-50 w-full absolute top-0 px-10 py-5 flex justify-end'}
