@@ -18,3 +18,16 @@ a {
 * {
   box-sizing: border-box;
 }
+
+
+.PhoneInputInput {
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+}
+
+.PhoneInputInput:focus {
+  box-shadow: none;
+}
+
+//}
