@@ -27,7 +27,6 @@ export default function GlobalContextProvider({
     async function handleUser(): Promise<void> {
         if (auth0User) {
             if (!('stripe_customer_id' in auth0User)) {
-                console.log('hello');
                 if (auth0User.name == null) {
                     return;
                 }

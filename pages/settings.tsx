@@ -9,14 +9,7 @@ import {
     UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-
-const user = {
-    name: 'Debbie Lewis',
-    handle: 'deblewis',
-    email: 'debbielewis@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=320&h=320&q=80',
-};
+import { useGetUser } from '../utils/api/auth0/user/get-user';
 
 const subNavigation = [
     { name: 'Profile', href: '#', icon: UserCircleIcon, current: true },
@@ -31,7 +24,11 @@ function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
 }
 
-export default function Example() {
+export default function Settings() {
+    const { data } = useGetUser();
+
+    console.log(data);
+
     const [availableToHire, setAvailableToHire] = useState(true);
     const [privateAccount, setPrivateAccount] = useState(false);
     const [allowCommenting, setAllowCommenting] = useState(true);
@@ -159,16 +156,16 @@ export default function Example() {
                                                     <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                                                         workcation.com/
                                                     </span>
-                                                    <input
-                                                        type="text"
-                                                        name="username"
-                                                        id="username"
-                                                        autoComplete="username"
-                                                        className="block w-full min-w-0 flex-grow rounded-none rounded-r-md border-gray-300 focus:border-sky-500 focus:ring-sky-500 sm:text-sm"
-                                                        defaultValue={
-                                                            user.handle
-                                                        }
-                                                    />
+                                                    {/* <input */}
+                                                    {/*    type="text" */}
+                                                    {/*    name="username" */}
+                                                    {/*    id="username" */}
+                                                    {/*    autoComplete="username" */}
+                                                    {/*    className="block w-full min-w-0 flex-grow rounded-none rounded-r-md border-gray-300 focus:border-sky-500 focus:ring-sky-500 sm:text-sm" */}
+                                                    {/*    defaultValue={ */}
+                                                    {/*        user.handle */}
+                                                    {/*    } */}
+                                                    {/* /> */}
                                                 </div>
                                             </div>
 
@@ -206,11 +203,11 @@ export default function Example() {
                                                         className="inline-block h-12 w-12 flex-shrink-0 overflow-hidden rounded-full"
                                                         aria-hidden="true"
                                                     >
-                                                        <img
-                                                            className="h-full w-full rounded-full"
-                                                            src={user.imageUrl}
-                                                            alt=""
-                                                        />
+                                                        {/* <img */}
+                                                        {/*    className="h-full w-full rounded-full" */}
+                                                        {/*    src={user.imageUrl} */}
+                                                        {/*    alt="" */}
+                                                        {/* /> */}
                                                     </div>
                                                     <div className="ml-5 rounded-md shadow-sm">
                                                         <div className="group relative flex items-center justify-center rounded-md border border-gray-300 py-2 px-3 focus-within:ring-2 focus-within:ring-sky-500 focus-within:ring-offset-2 hover:bg-gray-50">
@@ -238,11 +235,11 @@ export default function Example() {
                                             </div>
 
                                             <div className="relative hidden overflow-hidden rounded-full lg:block">
-                                                <img
-                                                    className="relative h-40 w-40 rounded-full"
-                                                    src={user.imageUrl}
-                                                    alt=""
-                                                />
+                                                {/* <img */}
+                                                {/*    className="relative h-40 w-40 rounded-full" */}
+                                                {/*    src={user.imageUrl} */}
+                                                {/*    alt="" */}
+                                                {/* /> */}
                                                 <label
                                                     htmlFor="desktop-user-photo"
                                                     className="absolute inset-0 flex h-full w-full items-center justify-center bg-black bg-opacity-75 text-sm font-medium text-white opacity-0 focus-within:opacity-100 hover:opacity-100"

@@ -19,8 +19,6 @@ export default async function handler(
         } else {
             const { email } = req.body;
 
-            console.log(email, 'email');
-
             const customer = await stripe.customers.create({
                 email: email,
             });
@@ -28,7 +26,6 @@ export default async function handler(
             res.status(200).json(customer);
         }
     } catch (e: any) {
-        console.log(e, 'e');
         res.status(400).json({ message: e.message });
     }
 }

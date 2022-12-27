@@ -1,17 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession, withApiAuthRequired } from '@auth0/nextjs-auth0';
-import { ManagementClient } from 'auth0';
+import { AppMetadata, ManagementClient, User, UserMetadata } from 'auth0';
 
 const userHandler = async (
     req: NextApiRequest,
-    res: NextApiResponse<
-        { [key: string]: string | number | boolean } | { message: string }
-    >
+    res: NextApiResponse<User<AppMetadata, UserMetadata> | { message: string }>
 ) => {
     try {
-        const { body } = req;
-        const params = body;
-
         const session = await getSession(req, res);
 
         if (session === null || session === undefined) {
@@ -25,12 +20,11 @@ const userHandler = async (
         const currentUserManagementClient = new ManagementClient({
             token: accessToken,
             domain: baseUrl.replace('https://', ''),
-            scope: 'openid profile read:current_user update:current_user_metadata',
+            scope: 'openid profile read:users read:current_user read:user_idp_tokens',
         });
 
-        await currentUserManagementClient.updateUserMetadata({ id }, params);
-
-        res.status(200).json(params);
+        const user = await currentUserManagementClient.getUser({ id });
+        res.status(200).json(user);
     } catch (e: any) {
         res.status(400).json({ message: e.message });
     }
