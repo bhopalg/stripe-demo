@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
+import { withApiAuthRequired } from '@auth0/nextjs-auth0';
 
 import { CreateStripeCheckoutItem } from '../../../models/stripe-checkout';
 
@@ -12,10 +13,7 @@ interface TransformedItem {
     quantity: number;
 }
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<any>
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
     try {
         const { priceId, quantity, id }: CreateStripeCheckoutItem = req.body;
 
@@ -43,3 +41,5 @@ export default async function handler(
         res.status(400).json({ message: e.message });
     }
 }
+
+export default withApiAuthRequired(handler);

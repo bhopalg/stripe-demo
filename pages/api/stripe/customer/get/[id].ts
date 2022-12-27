@@ -11,21 +11,14 @@ async function handler(
     res: NextApiResponse<Stripe.Customer | { message: string }>
 ) {
     try {
-        const existingCustomer = await stripe.customers.search({
-            query: `email:'${req.body.email}'`,
-        });
+        const { id } = req.query;
 
-        if (existingCustomer.data.length > 0) {
-            res.status(200).json(existingCustomer.data[0]);
-        } else {
-            const { email } = req.body;
-
-            const customer = await stripe.customers.create({
-                email: email,
-            });
-
-            res.status(200).json(customer);
+        if (id === undefined) {
+            res.status(404).json({ message: 'Stripe ID required' });
         }
+
+        const customer = await stripe.customers.retrieve(id as string);
+        res.status(200).json(customer as Stripe.Customer);
     } catch (e: any) {
         res.status(400).json({ message: e.message });
     }
