@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useGetUser } from '../utils/api/auth0/user/get-user';
+import { useGetStripeUser } from '../utils/api/stripe/get-user';
 
 const subNavigation = [
     { name: 'Profile', href: '#', icon: UserCircleIcon, current: true },
@@ -26,8 +27,11 @@ function classNames(...classes: string[]) {
 
 export default function Settings() {
     const { data } = useGetUser();
+    const { data: user } = useGetStripeUser(
+        data?.user_metadata?.stripe_customer_id
+    );
 
-    console.log(data);
+    console.log(user);
 
     const [availableToHire, setAvailableToHire] = useState(true);
     const [privateAccount, setPrivateAccount] = useState(false);
