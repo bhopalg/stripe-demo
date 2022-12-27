@@ -17,7 +17,7 @@ export default async function handler(
     res: NextApiResponse<any>
 ) {
     try {
-        const { priceId, quantity }: CreateStripeCheckoutItem = req.body;
+        const { priceId, quantity, id }: CreateStripeCheckoutItem = req.body;
 
         const transformedItem: TransformedItem = {
             price: priceId,
@@ -34,10 +34,12 @@ export default async function handler(
             mode: 'payment',
             success_url: `${redirectURL}?status=success`,
             cancel_url: `${redirectURL}?status=cancel`,
+            customer: id,
         });
 
         res.status(200).json({ id: session.id });
     } catch (e: any) {
+        console.log(e);
         res.status(400).json({ message: e.message });
     }
 }

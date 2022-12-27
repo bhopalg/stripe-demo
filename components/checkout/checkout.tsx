@@ -7,8 +7,11 @@ import { useGetProducts } from '../../utils/api/stripe/get-products';
 import { usePublishCheckout } from '../../utils/api/stripe/checkout';
 import { notify } from '../global/notifications';
 import LoadingSpinner from '../global/loading-spinner';
+import { useGetUser } from '../../utils/api/auth0/user/get-user';
 
 export default function Checkout() {
+    const { data: user } = useGetUser();
+
     const [selectedProduct, setSelectedProduct] =
         useState<ProductWithPrice | null>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -36,6 +39,7 @@ export default function Checkout() {
                 {
                     priceId: price.id,
                     quantity: 1,
+                    id: user?.user_metadata?.stripe_customer_id,
                 },
                 {
                     onSuccess: async res => {
