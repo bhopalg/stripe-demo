@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-    BellIcon,
-    CogIcon,
-    CreditCardIcon,
-    KeyIcon,
-    SquaresPlusIcon,
-    UserCircleIcon,
-} from '@heroicons/react/24/outline';
+import { HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
@@ -16,14 +9,11 @@ import { useGetUser } from '../utils/api/auth0/user/get-user';
 import { useGetStripeUser } from '../utils/api/stripe/get-user';
 import Layout from '../components/settings/layout';
 import Profile from '../components/settings/profile';
+import Address from '../components/settings/address';
 
 const subNavigation = [
     { name: 'Profile', icon: UserCircleIcon, key: 'profile' },
-    { name: 'Account', icon: CogIcon, key: 'account' },
-    { name: 'Password', icon: KeyIcon, key: 'password' },
-    { name: 'Notifications', icon: BellIcon, key: 'notifications' },
-    { name: 'Billing', icon: CreditCardIcon, key: 'billing' },
-    { name: 'Integrations', icon: SquaresPlusIcon, key: 'integrations' },
+    { name: 'Address', icon: HomeIcon, key: 'address' },
 ];
 
 export default function Settings() {
@@ -89,6 +79,9 @@ export default function Settings() {
                         </aside>
                         {isCurrent === 'profile' && user && (
                             <Profile user={user} />
+                        )}
+                        {isCurrent === 'address' && user && (
+                            <Address user={user} />
                         )}
                     </div>
                 </div>
