@@ -1,7 +1,12 @@
 import { useForm } from 'react-hook-form';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Stripe from 'stripe';
+
+import { useUpdateStripeCustomer } from '../../utils/api/stripe/customer-update';
+import { notify } from '../global/notifications';
+import { queryClient } from '../../pages/_app';
 
 interface FormInputs {
     name: string;
@@ -9,16 +14,57 @@ interface FormInputs {
     email: string;
 }
 
-export default function Profile() {
+export default function Profile({ user }: { user: Stripe.Customer }) {
+    console.log(user);
     const {
         register,
         handleSubmit,
         formState: { errors },
         setValue,
+        reset,
     } = useForm<FormInputs>();
-    const onSubmit = (data: any) => console.log(data);
+
+    const stripeCustomerId = user.id;
+
+    const updateCustomerMutation = useUpdateStripeCustomer();
+
+    const onSubmit = (data: FormInputs) => {
+        updateCustomerMutation.mutate(
+            {
+                id: stripeCustomerId,
+                options: {
+                    name: data.name,
+                    phone: data.phone,
+                    email: data.email,
+                },
+            },
+            {
+                onSuccess: async () => {
+                    updateCustomerMutation.reset();
+                    reset();
+                    await queryClient.invalidateQueries([
+                        'stripeUser',
+                        stripeCustomerId,
+                    ]);
+                    notify.success('Successfully updated customer!');
+                },
+                onError: () => {
+                    notify.error('Failed to update');
+                },
+            }
+        );
+    };
 
     const [phoneValue, setPhoneValue] = useState<string | undefined>(undefined);
+
+    useEffect(() => {
+        if (user) {
+            setValue('name', user.name ?? '');
+            setValue('email', user.email ?? '');
+            setValue('phone', user.phone ?? '');
+            setPhoneValue(user.phone ?? undefined);
+        }
+    }, [user]);
 
     return (
         <form
@@ -119,6 +165,12 @@ export default function Profile() {
 
             <div className="mt-4 flex justify-end py-4 px-4 sm:px-6">
                 <button
+                    onClick={() => {
+                        setValue('name', user.name ?? '');
+                        setValue('email', user.email ?? '');
+                        setValue('phone', user.phone ?? '');
+                        setPhoneValue(user.phone ?? undefined);
+                    }}
                     type="button"
                     className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                 >

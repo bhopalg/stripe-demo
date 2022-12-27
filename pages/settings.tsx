@@ -87,7 +87,9 @@ export default function Settings() {
                                 ))}
                             </nav>
                         </aside>
-                        {isCurrent === 'profile' && <Profile />}
+                        {isCurrent === 'profile' && user && (
+                            <Profile user={user} />
+                        )}
                     </div>
                 </div>
             </div>
