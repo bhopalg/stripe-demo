@@ -15,7 +15,6 @@ interface FormInputs {
 }
 
 export default function Profile({ user }: { user: Stripe.Customer }) {
-    console.log(user);
     const {
         register,
         handleSubmit,
