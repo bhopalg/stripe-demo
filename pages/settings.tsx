@@ -24,8 +24,6 @@ export default function Settings() {
         data?.user_metadata?.stripe_customer_id
     );
 
-    console.log(user);
-
     const [isCurrent, setIsCurrent] = useState<string | null>();
 
     useEffect(() => {

@@ -37,7 +37,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
 
         res.status(200).json({ id: session.id });
     } catch (e: any) {
-        console.log(e);
         res.status(400).json({ message: e.message });
     }
 }

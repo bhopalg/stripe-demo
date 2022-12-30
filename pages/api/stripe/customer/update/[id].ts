@@ -17,13 +17,31 @@ async function handler(
             res.status(404).json({ message: 'Stripe ID required' });
         }
 
-        const { email, name, phone } = req.body;
+        const { email, name, phone, address, shipping } = req.body;
 
-        const customer = await stripe.customers.update(id as string, {
-            email: email,
-            name: name,
-            phone,
-        });
+        const params: Stripe.CustomerUpdateParams = {};
+
+        if (email !== undefined) {
+            params.email = email;
+        }
+
+        if (name !== undefined) {
+            params.name = name;
+        }
+
+        if (phone !== undefined) {
+            params.phone = phone;
+        }
+
+        if (address !== undefined) {
+            params.address = address;
+        }
+
+        if (shipping !== undefined) {
+            params.shipping = shipping;
+        }
+
+        const customer = await stripe.customers.update(id as string, params);
 
         res.status(200).json(customer);
     } catch (e: any) {

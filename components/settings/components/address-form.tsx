@@ -3,10 +3,14 @@ import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 
 import { GooglePlaceResult } from '../../../models/google-maps';
+import { useUpdateStripeCustomer } from '../../../utils/api/stripe/customer-update';
+import { queryClient } from '../../../pages/_app';
+import { notify } from '../../global/notifications';
 
 interface AddressFormProps {
     user: Stripe.Customer;
     placeResult?: GooglePlaceResult | null;
+    setPlaceResult: (placeResult: GooglePlaceResult | null) => void;
 }
 
 interface FormInputs {
@@ -18,10 +22,11 @@ interface FormInputs {
     state: string;
 }
 
-export default function AddressForm({ user, placeResult }: AddressFormProps) {
-    console.log(user);
-    console.log(placeResult);
-
+export default function AddressForm({
+    user,
+    placeResult,
+    setPlaceResult,
+}: AddressFormProps) {
     const {
         register,
         handleSubmit,
@@ -32,12 +37,13 @@ export default function AddressForm({ user, placeResult }: AddressFormProps) {
 
     useEffect(() => {
         if (user.address !== null) {
-            setValue('line1', user.address?.postal_code ?? '');
-            setValue('line2', user.address?.postal_code ?? '');
-            setValue('state', user.address?.postal_code ?? '');
-            setValue('city', user.address?.postal_code ?? '');
-            setValue('country', user.address?.postal_code ?? '');
+            setValue('line1', user.address?.line1 ?? '');
+            setValue('line2', user.address?.line2 ?? '');
+            setValue('state', user.address?.state ?? '');
+            setValue('city', user.address?.city ?? '');
+            setValue('country', user.address?.country ?? '');
             setValue('postal_code', user.address?.postal_code ?? '');
+            setPlaceResult(null);
         }
     }, [user]);
 
@@ -74,11 +80,40 @@ export default function AddressForm({ user, placeResult }: AddressFormProps) {
                 types.includes('country')
             );
             setValue('country', country?.short_name ?? '');
+            setPlaceResult(null);
         }
     }, [placeResult]);
 
+    const updateCustomerMutation = useUpdateStripeCustomer();
+    const stripeCustomerId = user.id;
+
     const onSubmit = (data: FormInputs) => {
-        console.log(data);
+        const options = {
+            address: {
+                ...data,
+            },
+        };
+        updateCustomerMutation.mutate(
+            {
+                id: stripeCustomerId,
+                options: options,
+            },
+            {
+                onSuccess: async () => {
+                    updateCustomerMutation.reset();
+                    reset();
+                    setPlaceResult(null);
+                    await queryClient.invalidateQueries([
+                        'stripeUser',
+                        stripeCustomerId,
+                    ]);
+                    notify.success('Successfully updated customer!');
+                },
+                onError: () => {
+                    notify.error('Failed to update');
+                },
+            }
+        );
     };
     return (
         <form

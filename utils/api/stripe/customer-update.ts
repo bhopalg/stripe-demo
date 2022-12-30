@@ -3,7 +3,13 @@ import Stripe from 'stripe';
 
 import { APIError } from '../api-error';
 
-interface UpdateStripeCustomerOptions {}
+export interface UpdateStripeCustomerOptions {
+    name?: string;
+    phone?: string;
+    email?: string;
+    address?: Stripe.Address;
+    shipping?: Stripe.CustomerUpdateParams.Shipping;
+}
 
 async function updateStripeCustomer(
     options: UpdateStripeCustomerOptions,

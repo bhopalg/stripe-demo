@@ -1,15 +1,12 @@
 import Stripe from 'stripe';
 import Autocomplete from 'react-google-autocomplete';
 import { useState } from 'react';
+
 import { GooglePlaceResult } from '../../models/google-maps';
 import AddressForm from './components/address-form';
 
 export default function Address({ user }: { user: Stripe.Customer }) {
-    console.log(user);
-
     const [placeResult, setPlaceResult] = useState<GooglePlaceResult | null>();
-
-    console.log(placeResult);
 
     return (
         <div className="divide-y divide-gray-200 lg:col-span-9">
@@ -39,7 +36,11 @@ export default function Address({ user }: { user: Stripe.Customer }) {
                 </div>
             </div>
             <div className="py-6 px-4 sm:p-6 lg:pb-8">
-                <AddressForm user={user} placeResult={placeResult} />
+                <AddressForm
+                    user={user}
+                    placeResult={placeResult}
+                    setPlaceResult={setPlaceResult}
+                />
             </div>
         </div>
     );
