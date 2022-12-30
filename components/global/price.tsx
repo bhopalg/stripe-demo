@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { useMemo } from 'react';
 
-const currencySymbols: { [key: string]: string } = {
+export const currencySymbols: { [key: string]: string } = {
     USD: '$', // US Dollar
     EUR: '€', // Euro
     CRC: '₡', // Costa Rican Colón

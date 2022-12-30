@@ -23,7 +23,7 @@ async function getOrders(id: string) {
 }
 
 export function useGetOrders(id?: string) {
-    return useQuery<Stripe.Customer, APIError>({
+    return useQuery<Stripe.ApiSearchResult<Stripe.Charge>, APIError>({
         queryKey: ['orders', id],
         queryFn: async () => {
             if (id === undefined) {
