@@ -1,9 +1,14 @@
 import Stripe from 'stripe';
 import { useForm } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Switch } from '@headlessui/react';
+import classNames from 'classnames';
 
 import { GooglePlaceResult } from '../../../models/google-maps';
-import { useUpdateStripeCustomer } from '../../../utils/api/stripe/customer-update';
+import {
+    UpdateStripeCustomerOptions,
+    useUpdateStripeCustomer,
+} from '../../../utils/api/stripe/customer-update';
 import { queryClient } from '../../../pages/_app';
 import { notify } from '../../global/notifications';
 
@@ -35,6 +40,9 @@ export default function AddressForm({
         reset,
     } = useForm<FormInputs>();
 
+    const [isSameShipping, setIsSameShipping] = useState<boolean>(true);
+
+    console.log(user);
     useEffect(() => {
         if (user.address !== null) {
             setValue('line1', user.address?.line1 ?? '');
@@ -44,6 +52,9 @@ export default function AddressForm({
             setValue('country', user.address?.country ?? '');
             setValue('postal_code', user.address?.postal_code ?? '');
             setPlaceResult(null);
+            if (user.shipping !== null) {
+                setIsSameShipping(true);
+            }
         }
     }, [user]);
 
@@ -88,11 +99,22 @@ export default function AddressForm({
     const stripeCustomerId = user.id;
 
     const onSubmit = (data: FormInputs) => {
-        const options = {
+        const options: UpdateStripeCustomerOptions = {
             address: {
                 ...data,
             },
         };
+
+        if (isSameShipping && user.name) {
+            options.shipping = {
+                address: {
+                    ...data,
+                },
+                phone: user.phone ?? undefined,
+                name: user.name,
+            };
+        }
+
         updateCustomerMutation.mutate(
             {
                 id: stripeCustomerId,
@@ -115,6 +137,7 @@ export default function AddressForm({
             }
         );
     };
+
     return (
         <form
             className={'divide-y divide-gray-200'}
@@ -221,22 +244,56 @@ export default function AddressForm({
                     )}
                 </div>
             </div>
-            <div className="mt-4 flex justify-end py-4 px-4 sm:px-6">
-                <button
-                    onClick={() => {
-                        reset();
-                    }}
-                    type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                >
-                    Save
-                </button>
+            <div className="mt-4 flex justify-between py-4 px-4 sm:px-6">
+                <div>
+                    <Switch.Group as="div" className="flex items-center">
+                        <Switch
+                            checked={isSameShipping}
+                            onChange={setIsSameShipping}
+                            className={classNames(
+                                {
+                                    'bg-sky-700': isSameShipping,
+                                    'bg-grey-200': !isSameShipping,
+                                },
+                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-sky-50 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2'
+                            )}
+                        >
+                            <span className="sr-only">Use setting</span>
+                            <span
+                                aria-hidden="true"
+                                className={classNames(
+                                    {
+                                        'translate-x-5': isSameShipping,
+                                        'translate-x-0': !isSameShipping,
+                                    },
+                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                                )}
+                            />
+                        </Switch>
+                        <Switch.Label as="span" className="ml-3">
+                            <span className="text-sm font-medium text-gray-900">
+                                Shipping same as billing
+                            </span>
+                        </Switch.Label>
+                    </Switch.Group>
+                </div>
+                <div>
+                    <button
+                        onClick={() => {
+                            reset();
+                        }}
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                    >
+                        Save
+                    </button>
+                </div>
             </div>
         </form>
     );
