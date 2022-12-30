@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { HomeIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import {
+    HomeIcon,
+    ShoppingCartIcon,
+    UserCircleIcon,
+} from '@heroicons/react/24/outline';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
@@ -10,10 +14,12 @@ import { useGetStripeUser } from '../utils/api/stripe/get-user';
 import Layout from '../components/settings/layout';
 import Profile from '../components/settings/profile';
 import Address from '../components/settings/address';
+import Orders from '../components/settings/orders';
 
 const subNavigation = [
     { name: 'Profile', icon: UserCircleIcon, key: 'profile' },
     { name: 'Address', icon: HomeIcon, key: 'address' },
+    { name: 'Orders', icon: ShoppingCartIcon, key: 'orders' },
 ];
 
 export default function Settings() {
@@ -23,6 +29,8 @@ export default function Settings() {
     const { data: user } = useGetStripeUser(
         data?.user_metadata?.stripe_customer_id
     );
+
+    console.log(user);
 
     const [isCurrent, setIsCurrent] = useState<string | null>();
 
@@ -82,6 +90,9 @@ export default function Settings() {
                         )}
                         {isCurrent === 'address' && user && (
                             <Address user={user} />
+                        )}
+                        {isCurrent === 'orders' && user && (
+                            <Orders user={user} />
                         )}
                     </div>
                 </div>
