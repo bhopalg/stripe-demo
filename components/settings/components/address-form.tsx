@@ -11,6 +11,7 @@ import {
 } from '../../../utils/api/stripe/customer-update';
 import { queryClient } from '../../../pages/_app';
 import { notify } from '../../global/notifications';
+import ShippingForm from './shipping-form';
 
 interface AddressFormProps {
     user: Stripe.Customer;
@@ -42,7 +43,6 @@ export default function AddressForm({
 
     const [isSameShipping, setIsSameShipping] = useState<boolean>(true);
 
-    console.log(user);
     useEffect(() => {
         if (user.address !== null) {
             setValue('line1', user.address?.line1 ?? '');
@@ -52,7 +52,7 @@ export default function AddressForm({
             setValue('country', user.address?.country ?? '');
             setValue('postal_code', user.address?.postal_code ?? '');
             setPlaceResult(null);
-            if (user.shipping !== null) {
+            if (user.shipping !== null && user.name === user.shipping?.name) {
                 setIsSameShipping(true);
             }
         }
@@ -139,162 +139,167 @@ export default function AddressForm({
     };
 
     return (
-        <form
-            className={'divide-y divide-gray-200'}
-            onSubmit={handleSubmit(onSubmit)}
-        >
-            <div className="mt-6 grid grid-cols-12 gap-6">
-                <div className="col-span-12">
-                    <div className="block text-sm font-medium text-gray-700">
-                        Line 1
-                    </div>
-                    <input
-                        {...register('line1', { required: true })}
-                        type="text"
-                        name="line1"
-                        id="line1"
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                    />
-                    {errors.line1 && (
-                        <span
-                            className={
-                                'block text-sm font-medium text-red-500 py-2'
-                            }
-                        >
-                            Line 1 is required
-                        </span>
-                    )}
-                </div>
-                <div className="col-span-12">
-                    <div className="block text-sm font-medium text-gray-700">
-                        Line 2
-                    </div>
-                    <input
-                        {...register('line2')}
-                        type="text"
-                        name="line2"
-                        id="line2"
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                    />
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                    <div className="block text-sm font-medium text-gray-700">
-                        City
-                    </div>
-                    <input
-                        {...register('city', { required: true })}
-                        type="text"
-                        name="city"
-                        id="city"
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                    />
-                    {errors.city && (
-                        <span
-                            className={
-                                'block text-sm font-medium text-red-500 py-2'
-                            }
-                        >
-                            City is required
-                        </span>
-                    )}
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                    <div className="block text-sm font-medium text-gray-700">
-                        State
-                    </div>
-                    <input
-                        {...register('state')}
-                        type="text"
-                        name="state"
-                        id="state"
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                    />
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                    <div className="block text-sm font-medium text-gray-700">
-                        Country
-                    </div>
-                    <input
-                        {...register('country')}
-                        type="text"
-                        name="country"
-                        id="country"
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                    />
-                </div>
-                <div className="col-span-12 sm:col-span-6">
-                    <div className="block text-sm font-medium text-gray-700">
-                        Post Code
-                    </div>
-                    <input
-                        {...register('postal_code', { required: true })}
-                        type="text"
-                        name="postal_code"
-                        id="postal_code"
-                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
-                    />
-                    {errors.postal_code && (
-                        <span
-                            className={
-                                'block text-sm font-medium text-red-500 py-2'
-                            }
-                        >
-                            Post Code is required
-                        </span>
-                    )}
-                </div>
-            </div>
-            <div className="mt-4 flex justify-between py-4 px-4 sm:px-6">
-                <div>
-                    <Switch.Group as="div" className="flex items-center">
-                        <Switch
-                            checked={isSameShipping}
-                            onChange={setIsSameShipping}
-                            className={classNames(
-                                {
-                                    'bg-sky-700': isSameShipping,
-                                    'bg-grey-200': !isSameShipping,
-                                },
-                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-sky-50 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2'
-                            )}
-                        >
-                            <span className="sr-only">Use setting</span>
+        <div>
+            <form
+                className={'divide-y divide-gray-200'}
+                onSubmit={handleSubmit(onSubmit)}
+            >
+                <div className="mt-6 grid grid-cols-12 gap-6">
+                    <div className="col-span-12">
+                        <div className="block text-sm font-medium text-gray-700">
+                            Line 1
+                        </div>
+                        <input
+                            {...register('line1', { required: true })}
+                            type="text"
+                            name="line1"
+                            id="line1"
+                            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                        />
+                        {errors.line1 && (
                             <span
-                                aria-hidden="true"
+                                className={
+                                    'block text-sm font-medium text-red-500 py-2'
+                                }
+                            >
+                                Line 1 is required
+                            </span>
+                        )}
+                    </div>
+                    <div className="col-span-12">
+                        <div className="block text-sm font-medium text-gray-700">
+                            Line 2
+                        </div>
+                        <input
+                            {...register('line2')}
+                            type="text"
+                            name="line2"
+                            id="line2"
+                            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                        />
+                    </div>
+                    <div className="col-span-12 sm:col-span-6">
+                        <div className="block text-sm font-medium text-gray-700">
+                            City
+                        </div>
+                        <input
+                            {...register('city', { required: true })}
+                            type="text"
+                            name="city"
+                            id="city"
+                            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                        />
+                        {errors.city && (
+                            <span
+                                className={
+                                    'block text-sm font-medium text-red-500 py-2'
+                                }
+                            >
+                                City is required
+                            </span>
+                        )}
+                    </div>
+                    <div className="col-span-12 sm:col-span-6">
+                        <div className="block text-sm font-medium text-gray-700">
+                            State
+                        </div>
+                        <input
+                            {...register('state')}
+                            type="text"
+                            name="state"
+                            id="state"
+                            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                        />
+                    </div>
+                    <div className="col-span-12 sm:col-span-6">
+                        <div className="block text-sm font-medium text-gray-700">
+                            Country
+                        </div>
+                        <input
+                            {...register('country')}
+                            type="text"
+                            name="country"
+                            id="country"
+                            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                        />
+                    </div>
+                    <div className="col-span-12 sm:col-span-6">
+                        <div className="block text-sm font-medium text-gray-700">
+                            Post Code
+                        </div>
+                        <input
+                            {...register('postal_code', { required: true })}
+                            type="text"
+                            name="postal_code"
+                            id="postal_code"
+                            className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm"
+                        />
+                        {errors.postal_code && (
+                            <span
+                                className={
+                                    'block text-sm font-medium text-red-500 py-2'
+                                }
+                            >
+                                Post Code is required
+                            </span>
+                        )}
+                    </div>
+                </div>
+                <div className="mt-4 flex justify-between py-4 px-4 sm:px-6">
+                    <div>
+                        <Switch.Group as="div" className="flex items-center">
+                            <Switch
+                                checked={isSameShipping}
+                                onChange={setIsSameShipping}
                                 className={classNames(
                                     {
-                                        'translate-x-5': isSameShipping,
-                                        'translate-x-0': !isSameShipping,
+                                        'bg-sky-700': isSameShipping,
+                                        'bg-grey-200': !isSameShipping,
                                     },
-                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                                    'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-sky-50 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2'
                                 )}
-                            />
-                        </Switch>
-                        <Switch.Label as="span" className="ml-3">
-                            <span className="text-sm font-medium text-gray-900">
-                                Shipping same as billing
-                            </span>
-                        </Switch.Label>
-                    </Switch.Group>
+                            >
+                                <span className="sr-only">Use setting</span>
+                                <span
+                                    aria-hidden="true"
+                                    className={classNames(
+                                        {
+                                            'translate-x-5': isSameShipping,
+                                            'translate-x-0': !isSameShipping,
+                                        },
+                                        'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
+                                    )}
+                                />
+                            </Switch>
+                            <Switch.Label as="span" className="ml-3">
+                                <span className="text-sm font-medium text-gray-900">
+                                    Shipping same as billing
+                                </span>
+                            </Switch.Label>
+                        </Switch.Group>
+                    </div>
+                    <div>
+                        <button
+                            onClick={() => {
+                                reset();
+                            }}
+                            type="button"
+                            className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                        >
+                            Save
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <button
-                        onClick={() => {
-                            reset();
-                        }}
-                        type="button"
-                        className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="ml-5 inline-flex justify-center rounded-md border border-transparent bg-sky-700 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                    >
-                        Save
-                    </button>
-                </div>
-            </div>
-        </form>
+            </form>
+            {!isSameShipping && (
+                <ShippingForm shipping={user.shipping} id={user.id} />
+            )}
+        </div>
     );
 }
