@@ -29,6 +29,8 @@ export default function Settings() {
     useEffect(() => {
         if ('s' in query) {
             setIsCurrent(query.s as string);
+        } else {
+            setIsCurrent('profile');
         }
     }, [query]);
 
