@@ -40,7 +40,7 @@ export default function Header() {
             )}
             {user && (
                 <Link
-                    href={'/settings'}
+                    href={'/settings?s=profile'}
                     className="inline-flex items-center rounded-full border border-transparent text-white shadow-sm"
                 >
                     {user.picture && (
