@@ -30,8 +30,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
         const session = await stripe.checkout.sessions.create({
             line_items: [transformedItem],
             mode: 'payment',
-            success_url: `${redirectURL}?status=success`,
-            cancel_url: `${redirectURL}?status=cancel`,
+            success_url: `${redirectURL}/settings?s=orders`,
+            cancel_url: `${redirectURL}/?status=cancel`,
             customer: id,
         });
 
